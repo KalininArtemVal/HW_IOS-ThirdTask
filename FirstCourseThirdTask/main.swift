@@ -149,9 +149,7 @@ checker.checkProtocols(stack: newStack, queue: newQueue)
 ///// Формат и порядок данных в строке нужно соблюсти строго.
 /////
 ///// - Parameter userType: Тип User
-//
-//
-//
+
 
 
 extension User: JSONSerializable, JSONInitializable {
@@ -166,8 +164,7 @@ extension User: JSONSerializable, JSONInitializable {
 
     public convenience init(JSON: String) {
         self.init()
-        
-        let data1 = Data(toJSON().utf8)
+        let data1 = Data(JSON.utf8)
         if let json = try! JSONSerialization.jsonObject(with: data1, options: []) as? [String: String] {
             self.fullName = json["fullName"] ?? ""
             self.email = json["email"] ?? ""

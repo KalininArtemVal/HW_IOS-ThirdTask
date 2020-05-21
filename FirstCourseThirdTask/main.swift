@@ -15,69 +15,71 @@ import FirstCourseThirdTaskChecker
 var checker = Checker()
 //
 //______________________________
-//class Queue: ArrayInitializableStorage {
+class Queue: ArrayInitializableStorage {
+    
+    var newArray = [Int]()
+    required init(array: [Int]) {
+        super.init(array: newArray)
+        self.newArray = array
+        self.count = newArray.count
+    }
+    
+    open override var count: Int { get {return newArray.count} set{} }
+    
+    required public init() {
+        super.init()
+        self.count = newArray.count
+    }
+    
+    override func push(_ element: Int) {
+        newArray.append(element)
+    }
+    
+    override func pop() -> Int {
+        var value = 0
+        if newArray.isEmpty {
+            print("Array is empty")
+        } else if newArray.count >= 0 {
+            value = newArray.remove(at: 0)
+        }
+        return value
+    }
+}
+
+class Stack: ArrayInitializableStorage {
+    
+    var newArray = [Int]()
+    required init(array: [Int]) {
+        super.init(array: newArray)
+        self.newArray = array
+    }
+    
+    override var count: Int { get {return newArray.count} set {} }
+    required init() {
+        super.init()
+        self.count = newArray.count
+    }
+    
+    override func pop() -> Int {
+        var value = 0
+        if newArray.isEmpty {
+            print("Array is empty")
+        } else {
+            value = newArray.removeLast()
+        }
+        return value
+    }
+    
+    override func push(_ element: Int) {
+        newArray.append(element)
+    }
+}
 //
-//    var array: [Int]
-//
-//    open override var count: Int { get {return array.count} }
-//
-//
-//    required public init(){
-//        fatalError("init() has not been implemented")
-//    }
-//
-//    required init(array: [Int]) {
-//        fatalError("init(array:) has not been implemented")
-//    }
-//
-//    override func push(_ element: Int) {
-//        array.append(element)
-//    }
-//
-//    override func pop() -> Int {
-//        var value = 0
-//        if array.isEmpty {
-//            print("Array is empty")
-//        } else if array.count >= 0 {
-//            value = array.remove(at: 0)
-//        }
-//        return value
-//    }
-//}
-//
-//class Stack: ArrayInitializableStorage {
-//
-//    var array = [Int]()
-//    required init(array: [Int]) {
-//        fatalError("init(array:) has not been implemented")
-//    }
-//
-//    override var count: Int { get {return array.count} }
-//    required init() {
-//        fatalError("init() has not been implemented")
-//    }
-//
-//    override func pop() -> Int {
-//        var value = 0
-//        if array.isEmpty {
-//            print("Array is empty")
-//        } else {
-//            value = array.removeLast()
-//        }
-//        return value
-//    }
-//
-//    override func push(_ element: Int) {
-//        array.append(element)
-//    }
-//}
-//
-//var queue = Queue()
-//var stack = Stack()
-//
-//var checker = Checker()
-//
-//checker.checkInheritance(stack: stack, queue: queue)
+var queue = Queue()
+var stack = Stack()
+
+
+checker.checkInheritance(stack: stack, queue: queue)
 
 
 /// Task 2: - Check Protocols
@@ -137,42 +139,46 @@ let newStack = NewStack()
 let newQueue = NewQueue()
 
 checker.checkProtocols(stack: newStack, queue: newQueue)
-
-
-/// Ваша задача добавить в класс User поддержку протоколов JSONSerializable и JSONInitializable.
-/// Требования к ним смотрите в комментариях. Обратите внимание, что проверять данные на
-/// корректность не нужно. Checker всегда будет передавать правильный JSON. Для проверки
-/// передайте в метод тип User. Если ваше решение окажется правильным, то в консоли вы увидите
-/// часть кодового слова. Внимание! Это задание нельзя решать с помощью протокола Codable.
-/// Формат и порядок данных в строке нужно соблюсти строго.
-///
-/// - Parameter userType: Тип User
-
- /// Конвертирует сущность в JSON вида {"property1": value1, "property2": value2}
-
+//
+//
+///// Ваша задача добавить в класс User поддержку протоколов JSONSerializable и JSONInitializable.
+///// Требования к ним смотрите в комментариях. Обратите внимание, что проверять данные на
+///// корректность не нужно. Checker всегда будет передавать правильный JSON. Для проверки
+///// передайте в метод тип User. Если ваше решение окажется правильным, то в консоли вы увидите
+///// часть кодового слова. Внимание! Это задание нельзя решать с помощью протокола Codable.
+///// Формат и порядок данных в строке нужно соблюсти строго.
+/////
+///// - Parameter userType: Тип User
+//
+//
+//
 
 
 extension User: JSONSerializable, JSONInitializable {
-
     
-    public convenience init(JSON: String) {}
-
+    
     public func toJSON() -> String {
-        var json = [String: String]()
-        json.updateValue(fullName, forKey: "property1")
-        json.updateValue(email, forKey: "property2")
+        let name = fullName
+        let em = email
+        let string = "{\"fullName\": \"\(name)\", \"email\": \"\(em)\"}"
+        return  string
+    }
+
+    public convenience init(JSON: String) {
+        self.init()
+        
+        let data1 = Data(toJSON().utf8)
+        if let json = try! JSONSerialization.jsonObject(with: data1, options: []) as? [String: String] {
+            self.fullName = json["fullName"] ?? ""
+            self.email = json["email"] ?? ""
+        }
+    }
 }
-}
+
+
+let user = User.self
+checker.checkExtensions(userType: user)
 
 
 
-var aaa = User()
-aaa.fullName = "Alex"
-aaa.email = "543"
 
-aaa = User(JSON: "Alex")
-aaa.toJSON()
-
-
-
-checker.checkExtensions(userType: aaa)
